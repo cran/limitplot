@@ -1,136 +1,35 @@
-limitplot <-
-function(...,lod,CI=95,ratio=1/25,shape=1,size=1,col="black",main="",xlab="",ylab="",names="",axis=5,logaxis=1,stack=5,jitterwidth=0.2,jittershape=1,jittersize=1,jittercol="black",log="",blod=1/2)
-{
-if(log=="y")
-{
-CI_lod<-log(lod*blod)
-lod<-log(lod)
-ya<-log(c(...));
-xa<-rep(seq(1:length(list(...))),times=as.numeric(summary(list(...))[1:length(list(...))]));
-pl<-data.frame(xi=xa+runif(length(c(...)),-jitterwidth,jitterwidth),yi=ya);
-plot(
-pl$xi[pl$yi>=lod],
-exp(pl$yi[pl$yi>=lod]),
-xlim=c(0.25,length(list(...))+0.75),
-ylim=c(
-if(lod<=min(ya))
-{exp(lod)}
-else
-{exp(lod-((1-max(summary(factor(xa[ya<lod])))%%stack/stack)+max(summary(factor(xa[ya<lod])))/stack)*(max(ya)-lod)/(1/ratio))},
-exp(max(ya))),
-yaxp=c(exp(lod),exp(max(ya)),n=logaxis),
-xaxt="n",
-ylab=ylab,
-xlab=xlab,
-log="y",
-pch=jittershape,
-cex=jittersize,
-col=jittercol,
-main=main);
-mtext(names,side=1,at=seq(1:length(list(...))));
-segments(0,exp(lod),length(list(...))+1,exp(lod),lty="dashed");
-for(i in 1:length(list(...)))
-{
-rect(
-i-0.25,
-exp(max(
-lod,
-qnorm(
-((1-CI/100)/2),
-mean(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i])))),
-sd(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i]))))/sqrt(length(ya[xa==i]))))),
-i+0.25,
-exp(max(
-lod,
-qnorm(
-(1-(1-CI/100)/2),
-mean(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i])))),
-sd(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i]))))/sqrt(length(ya[xa==i]))))))
-}
-for(i in 1:length(list(...)))
-{
-if(exp(lod)<=exp(mean(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i]))))))
-{
-segments(
-i-0.25,
-exp(mean(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i]))))),
-i+0.25,
-exp(mean(c(ya[ya>=lod&xa==i],seq(from=CI_lod,to=CI_lod,length.out=length(ya[ya<lod&xa==i]))))))
-}
-}
-if(lod>min(ya))
-{
-for(i in 1:length(list(...)))
-{
-xp<-rep(seq(-0.2,0.2,length.out=stack),len=length(xa[xa==i&ya<lod]))+i;
-yp<-rep(seq(1:(1-max(summary(factor(xa[ya<lod])))%%stack/stack)+max(summary(factor(xa[ya<lod])))/stack),each=stack,len=length(xa[ya<lod&xa==i]));
-points(xp,exp(lod-yp*(max(ya)-lod)/(1/ratio)),pch=shape,cex=size,col=col)
-}
-}
-}
-else
-{
-ya<-c(...);
-xa<-rep(seq(1:length(list(...))),times=as.numeric(summary(list(...))[1:length(list(...))]));
-pl<-data.frame(xi=xa+runif(length(c(...)),-jitterwidth,jitterwidth),yi=ya);
-plot(
-pl$xi[pl$yi>=lod],
-pl$yi[pl$yi>=lod],
-xlim=c(0.25,length(list(...))+0.75),
-ylim=c(
-if(lod<=min(ya))
-{lod}
-else
-{lod-((1-max(summary(factor(xa[ya<lod])))%%stack/stack)+max(summary(factor(xa[ya<lod])))/stack)*(max(ya)-lod)/(1/ratio)},
-max(ya)),
-yaxp=c(lod,max(ya),n=(axis-1)),
-xaxt="n",
-ylab=ylab,
-xlab=xlab,
-pch=jittershape,
-cex=jittersize,
-col=jittercol,
-main=main);
-mtext(names,side=1,at=seq(1:length(list(...))));
-segments(0,lod,length(list(...))+1,lod,lty="dashed");
-for(i in 1:length(list(...)))
-{
-rect(
-i-0.25,
-max(
-lod,
-qnorm(
-((1-CI/100)/2),
-mean(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i])))),
-sd(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i]))))/sqrt(length(ya[xa==i])))),
-i+0.25,
-max(
-lod,
-qnorm(
-(1-(1-CI/100)/2),
-mean(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i])))),
-sd(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i]))))/sqrt(length(ya[xa==i])))))
-}
-for(i in 1:length(list(...)))
-{
-if(lod<=mean(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i])))))
-{
-segments(
-i-0.25,
-mean(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i])))),
-i+0.25,
-mean(c(ya[ya>=lod&xa==i],seq(from=lod*blod,to=lod*blod,length.out=length(ya[ya<lod&xa==i])))))
-}
-}
-if(lod>min(ya))
-{
-for(i in 1:length(list(...)))
-{
-xp<-rep(seq(-0.2,0.2,length.out=stack),len=length(xa[xa==i&ya<lod]))+i;
-yp<-rep(seq(1:(1-max(summary(factor(xa[ya<lod])))%%stack/stack)+max(summary(factor(xa[ya<lod])))/stack),each=stack,len=length(xa[ya<lod&xa==i]));
-points(xp,lod-yp*(max(ya)-lod)/(1/ratio),pch=shape,cex=size,col=col)
-}
-}
-}
-}
+#
+# Limitplot functions -- main constructor
+#
 
+limitplot <- function(..., lod, CI = 95, ratio = 1/25, shape = 1, size = 1, col = "black", main = "", xlab = "", ylab = "", names = "", axis = 5, stack = 5, jitterwidth = 0.2, jittershape = 1, jittersize = 1, jittercol = "black", log = "", blod = 1/2) {
+  # Check LOD value
+  if(lod<=0) {
+    stop("Limit of detection (LOD) must be above 0.\n");
+  }
+
+  # Check values
+  if(min(c(...))<=0) {
+    stop("Variable values must be above 0.\n");
+  }
+ 
+  # Variable count
+  vnum <- length(list(...));  
+
+  # Set up the arrays with the variable data
+  xa <- rep(seq(1:vnum), times = as.numeric(summary(list(...))[1:vnum]));
+  ya <- c(...);
+
+  if(log == "y") {
+    ya <- log(ya);
+    lod <- log(lod);
+  }
+
+  # Data frame with properly formatted data
+  pl <- data.frame(xi = xa ,yi = ya);
+
+  # Plot
+  plotInit(pl, lod, vnum, stack, ratio, axis, main, xlab, ylab, jitterwidth, jittershape, jittersize, jittercol, names, log);
+  plotBox(pl, lod, vnum, CI, blod);
+  plotStack(pl, lod, vnum, stack, ratio, shape, size, col);
+}

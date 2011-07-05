@@ -1,14 +1,18 @@
 \name{limitplot}
-\Rdversion{1.1}
+\Rdversion{1.2}
 \alias{limitplot}
 \title{
-Jitter/Box Plot with Ordered Points Below the Limit of Detection
+Jitter/CI Plot with Ordered Points Below the Limit of Detection
 }
 \description{
 Values below a specified limit of detection are stacked in rows in order to reduce overplotting and create a clear graphical representation of your data.
 }
 \usage{
-limitplot(..., lod, CI = 95, ratio = 1/25, shape = 1, size = 1, col = "black", main = "", xlab = "", ylab = "", names = "", axis = 5, logaxis = 1, stack = 5, jitterwidth = 0.2, jittershape = 1, jittersize = 1, jittercol = "black", log = "", blod = 1/2)
+limitplot(..., lod, CI = 95, ratio = 1/25, shape = 1, 
+	size = 1, col = "black", main = "", xlab = "", 
+	ylab = "", names = "", axis = 5, stack = 5, 
+        jitterwidth = 0.2, jittershape = 1, jittersize = 1, 
+	jittercol = "black", log = "", blod = 1/2)
 }
 \arguments{
   \item{\dots}{
@@ -47,9 +51,6 @@ a vector of names for the groups.
   \item{axis}{
 See the \code{yaxp} graphical parameter in \link{par}.
 }
-  \item{logaxis}{
-See the \code{yaxp} graphical parameter in \link{par}.
-}
   \item{stack}{
 an integer indicating the number of points below the limit of detection to be stacked per row.
 }
@@ -79,20 +80,28 @@ Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) The New S Language. Wadsw
 Omar E. Olmedo
 }
 
+%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \link{plot},\link{points},\link{rect},\link{par}
 }
 \examples{
-## Create a basic limitplot with four different categories from log-normally distributed data and set the limit of detection to 0.35:
+## Create a basic limitplot with four different categories 
+## from log-normally distributed data and set the limit of detection to 0.35:
 conc<-rlnorm(150,0.5,5)
 category<-sample(4,150,replace=TRUE)
-limitplot(conc[category==1],conc[category==2],conc[category==3],conc[category==4],lod=0.35,log="y")
+limitplot(conc[category==1],conc[category==2], 
+	conc[category==3], conc[category==4], 
+	lod = 0.35, log = "y")
 
 ## Add labels and change the graphical parameters:
-limitplot(conc[category==1],conc[category==2],conc[category==3],conc[category==4],lod=0.35,log="y",ylab="Bla g 2 (ug/g)",xlab="Report of Cockroach in homes", names=c("Never","Rarely","Once a week","Everyday"),main="Cockroach prevalence in homes")
-
-
+limitplot(conc[category==1], conc[category==2], 
+	conc[category==3], conc[category==4], 
+	lod = 0.35, log = "y", 
+	ylab = "Bla g 2 (ug/g)", xlab = "Report of Cockroach in homes", 
+	names = c("Never","Rarely","Weekly","Daily"), 
+	main = "Exposure to Cockroach in homes", 
+	size = 0.5, shape = 16, 
+	jittersize = 0.5, jittershape = 16, jittercol = "red")
 }
 \keyword{hplot}
-\keyword{aplot}
